@@ -1,5 +1,6 @@
 "no use strict";
 
+
 var console = {
     log: function(msg) {
         postMessage({type: "log", data: msg});
@@ -9699,7 +9700,7 @@ define('ace/narcissus/jsdefs', ['require', 'exports', 'module' ], function(requi
     }
 
     Stack.prototype = {
-        push: function(x) {
+     {
             return new Stack({ top: x, rest: this.elts });
         },
         top: function() {
