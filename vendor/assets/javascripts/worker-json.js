@@ -149,24 +149,15 @@ onmessage = function(e) {
 */
 
 define('ace/lib/fixoldbrowsers', ['require', 'exports', 'module' , 'ace/lib/regexp', 'ace/lib/es5-shim'], function(require, exports, module) {
-"use strict";
+
 
 require("./regexp");
 require("./es5-shim");
 
-});/**
- *  Based on code from:
- *
- * XRegExp 1.5.0
- * (c) 2007-2010 Steven Levithan
- * MIT License
- * <http://xregexp.com>
- * Provides an augmented, extensible, cross-browser implementation of regular expressions,
- * including support for additional syntax, flags, and methods
- */
+});
  
 define('ace/lib/regexp', ['require', 'exports', 'module' ], function(require, exports, module) {
-"use strict";
+
 
     //---------------------------------
     //  Private variables
@@ -185,6 +176,9 @@ define('ace/lib/regexp', ['require', 'exports', 'module' ], function(require, ex
             real.test.call(x, "");
             return !x.lastIndex;
         }();
+
+    if (compliantLastIndexIncrement && compliantExecNpcg)
+        return;
 
     //---------------------------------
     //  Overriden native methods
@@ -251,7 +245,7 @@ define('ace/lib/regexp', ['require', 'exports', 'module' ], function(require, ex
                (regex.multiline  ? "m" : "") +
                (regex.extended   ? "x" : "") + // Proposed for ES4; included in AS3
                (regex.sticky     ? "y" : "");
-    };
+    }
 
     function indexOf (array, item, from) {
         if (Array.prototype.indexOf) // Use the native array method if available
@@ -261,7 +255,7 @@ define('ace/lib/regexp', ['require', 'exports', 'module' ], function(require, ex
                 return i;
         }
         return -1;
-    };
+    }
 
 });
 // vim: ts=4 sts=4 sw=4 expandtab
@@ -292,7 +286,7 @@ define('ace/lib/regexp', ['require', 'exports', 'module' ], function(require, ex
 
 define('ace/lib/es5-shim', ['require', 'exports', 'module' ], function(require, exports, module) {
 
-/**
+/*
  * Brings an environment as close to ECMAScript 5 compliance
  * as is possible with the facilities of erstwhile engines.
  *
@@ -1322,48 +1316,10 @@ var prepareString = "a"[0] != "a",
         }
         return Object(o);
     };
-});/* vim:ts=4:sts=4:sw=4:
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Ajax.org Code Editor (ACE).
- *
- * The Initial Developer of the Original Code is
- * Ajax.org B.V.
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *      Fabian Jakobs <fabian AT ajax DOT org>
- *      Irakli Gozalishvili <rfobic@gmail.com> (http://jeditoolkit.com)
- *      Mike de Boer <mike AT ajax DOT org>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+});
 
 define('ace/lib/event_emitter', ['require', 'exports', 'module' ], function(require, exports, module) {
-"use strict";
+
 
 var EventEmitter = {};
 
@@ -1378,7 +1334,8 @@ EventEmitter._dispatchEvent = function(eventName, e) {
         return;
 
     e = e || {};
-    e.type = eventName;
+    if (!e.type)
+        e.type = eventName;
     
     if (!e.stopPropagation) {
         e.stopPropagation = function() {
@@ -1399,7 +1356,7 @@ EventEmitter._dispatchEvent = function(eventName, e) {
     }
     
     if (defaultHandler && !e.defaultPrevented)
-        defaultHandler(e);
+        return defaultHandler(e);
 };
 
 EventEmitter.setDefaultHandler = function(eventName, callback) {
@@ -1417,7 +1374,7 @@ EventEmitter.addEventListener = function(eventName, callback) {
 
     var listeners = this._eventRegistry[eventName];
     if (!listeners)
-        var listeners = this._eventRegistry[eventName] = [];
+        listeners = this._eventRegistry[eventName] = [];
 
     if (listeners.indexOf(callback) == -1)
         listeners.push(callback);
@@ -1442,45 +1399,10 @@ EventEmitter.removeAllListeners = function(eventName) {
 
 exports.EventEmitter = EventEmitter;
 
-});/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Ajax.org Code Editor (ACE).
- *
- * The Initial Developer of the Original Code is
- * Ajax.org B.V.
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *      Fabian Jakobs <fabian AT ajax DOT org>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+});
 
 define('ace/lib/oop', ['require', 'exports', 'module' ], function(require, exports, module) {
-"use strict";
+
 
 exports.inherits = (function() {
     var tempCtor = function() {};
@@ -1503,45 +1425,9 @@ exports.implement = function(proto, mixin) {
 };
 
 });
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Ajax.org Code Editor (ACE).
- *
- * The Initial Developer of the Original Code is
- * Ajax.org B.V.
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *      Fabian Jakobs <fabian AT ajax DOT org>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
 
 define('ace/mode/json_worker', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/worker/mirror', 'ace/mode/json/json_parse'], function(require, exports, module) {
-"use strict";
+
 
 var oop = require("../lib/oop");
 var Mirror = require("../worker/mirror").Mirror;
@@ -1605,8 +1491,9 @@ oop.inherits(JsonWorker, Mirror);
 
 }).call(JsonWorker.prototype);
 
-});define('ace/worker/mirror', ['require', 'exports', 'module' , 'ace/document', 'ace/lib/lang'], function(require, exports, module) {
-"use strict";
+});
+define('ace/worker/mirror', ['require', 'exports', 'module' , 'ace/document', 'ace/lib/lang'], function(require, exports, module) {
+
 
 var Document = require("../document").Document;
 var lang = require("../lib/lang");
@@ -1647,61 +1534,32 @@ var Mirror = exports.Mirror = function(sender) {
     
 }).call(Mirror.prototype);
 
-});/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Ajax.org Code Editor (ACE).
- *
- * The Initial Developer of the Original Code is
- * Ajax.org B.V.
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *      Fabian Jakobs <fabian AT ajax DOT org>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+});
 
 define('ace/document', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/event_emitter', 'ace/range', 'ace/anchor'], function(require, exports, module) {
-"use strict";
+
 
 var oop = require("./lib/oop");
 var EventEmitter = require("./lib/event_emitter").EventEmitter;
 var Range = require("./range").Range;
 var Anchor = require("./anchor").Anchor;
 
+ /**
+ * new Document([text])
+ * - text (String | Array): The starting text
+ *
+ * Creates a new `Document`. If `text` is included, the `Document` contains those strings; otherwise, it's empty.
+ *
+ **/
 var Document = function(text) {
     this.$lines = [];
 
-    if (Array.isArray(text)) {
-        this.insertLines(0, text);
-    }
     // There has to be one line at least in the document. If you pass an empty
     // string to the insert function, nothing will happen. Workaround.
-    else if (text.length == 0) {
+    if (text.length == 0) {
         this.$lines = [""];
+    } else if (Array.isArray(text)) {
+        this.insertLines(0, text);
     } else {
         this.insert({row: 0, column:0}, text);
     }
@@ -1710,17 +1568,14 @@ var Document = function(text) {
 (function() {
 
     oop.implement(this, EventEmitter);
-
     this.setValue = function(text) {
         var len = this.getLength();
         this.remove(new Range(0, 0, len, this.getLine(len-1).length));
         this.insert({row: 0, column:0}, text);
     };
-
     this.getValue = function() {
         return this.getAllLines().join(this.getNewLineCharacter());
     };
-
     this.createAnchor = function(row, column) {
         return new Anchor(this, row, column);
     };
@@ -1734,8 +1589,6 @@ var Document = function(text) {
         this.$split = function(text) {
             return text.split(/\r\n|\r|\n/);
         };
-
-
     this.$detectNewLine = function(text) {
         var match = text.match(/^.*?(\r\n|\r|\n)/m);
         if (match) {
@@ -1744,7 +1597,6 @@ var Document = function(text) {
             this.$autoNewLine = "\n";
         }
     };
-
     this.getNewLineCharacter = function() {
       switch (this.$newLineMode) {
           case "windows":
@@ -1766,52 +1618,36 @@ var Document = function(text) {
 
         this.$newLineMode = newLineMode;
     };
-
     this.getNewLineMode = function() {
         return this.$newLineMode;
     };
-
     this.isNewLine = function(text) {
         return (text == "\r\n" || text == "\r" || text == "\n");
     };
-
-    /**
-     * Get a verbatim copy of the given line as it is in the document
-     */
     this.getLine = function(row) {
         return this.$lines[row] || "";
     };
-
     this.getLines = function(firstRow, lastRow) {
         return this.$lines.slice(firstRow, lastRow + 1);
     };
-
-    /**
-     * Returns all lines in the document as string array. Warning: The caller
-     * should not modify this array!
-     */
     this.getAllLines = function() {
         return this.getLines(0, this.getLength());
     };
-
     this.getLength = function() {
         return this.$lines.length;
     };
-
     this.getTextRange = function(range) {
         if (range.start.row == range.end.row) {
             return this.$lines[range.start.row].substring(range.start.column,
                                                          range.end.column);
         }
         else {
-            var lines = [];
-            lines.push(this.$lines[range.start.row].substring(range.start.column));
-            lines.push.apply(lines, this.getLines(range.start.row+1, range.end.row-1));
-            lines.push(this.$lines[range.end.row].substring(0, range.end.column));
+            var lines = this.getLines(range.start.row+1, range.end.row-1);
+            lines.unshift((this.$lines[range.start.row] || "").substring(range.start.column));
+            lines.push((this.$lines[range.end.row] || "").substring(0, range.end.column));
             return lines.join(this.getNewLineCharacter());
         }
     };
-
     this.$clipPosition = function(position) {
         var length = this.getLength();
         if (position.row >= length) {
@@ -1820,13 +1656,13 @@ var Document = function(text) {
         }
         return position;
     };
-
     this.insert = function(position, text) {
-        if (text.length == 0)
+        if (!text || text.length === 0)
             return position;
 
         position = this.$clipPosition(position);
 
+        // only detect new lines if the document has no line break yet
         if (this.getLength() <= 1)
             this.$detectNewLine(text);
 
@@ -1842,10 +1678,16 @@ var Document = function(text) {
         }
         return position;
     };
-
     this.insertLines = function(row, lines) {
         if (lines.length == 0)
             return {row: row, column: 0};
+
+        // apply doesn't work for big arrays (smallest threshold is on safari 0xFFFF)
+        // to circumvent that we have to break huge inserts into smaller chunks here
+        if (lines.length > 0xFFFF) {
+            var end = this.insertLines(row, lines.slice(0xFFFF));
+            lines = lines.slice(0, 0xFFFF);
+        }
 
         var args = [row, 0];
         args.push.apply(args, lines);
@@ -1858,9 +1700,8 @@ var Document = function(text) {
             lines: lines
         };
         this._emit("change", { data: delta });
-        return range.end;
+        return end || range.end;
     };
-
     this.insertNewLine = function(position) {
         position = this.$clipPosition(position);
         var line = this.$lines[position.row] || "";
@@ -1882,7 +1723,6 @@ var Document = function(text) {
 
         return end;
     };
-
     this.insertInLine = function(position, text) {
         if (text.length == 0)
             return position;
@@ -1906,7 +1746,6 @@ var Document = function(text) {
 
         return end;
     };
-
     this.remove = function(range) {
         // clip to document
         range.start = this.$clipPosition(range.start);
@@ -1938,7 +1777,6 @@ var Document = function(text) {
         }
         return range.start;
     };
-
     this.removeInLine = function(row, startColumn, endColumn) {
         if (startColumn == endColumn)
             return;
@@ -1957,14 +1795,6 @@ var Document = function(text) {
         this._emit("change", { data: delta });
         return range.start;
     };
-
-    /**
-     * Removes a range of full lines
-     *
-     * @param firstRow {Integer} The first row to be removed
-     * @param lastRow {Integer} The last row to be removed
-     * @return {String[]} The removed lines
-     */
     this.removeLines = function(firstRow, lastRow) {
         var range = new Range(firstRow, 0, lastRow + 1, 0);
         var removed = this.$lines.splice(firstRow, lastRow - firstRow + 1);
@@ -1978,7 +1808,6 @@ var Document = function(text) {
         this._emit("change", { data: delta });
         return removed;
     };
-
     this.removeNewLine = function(row) {
         var firstLine = this.getLine(row);
         var secondLine = this.getLine(row+1);
@@ -1995,7 +1824,6 @@ var Document = function(text) {
         };
         this._emit("change", { data: delta });
     };
-
     this.replace = function(range, text) {
         if (text.length == 0 && range.isEmpty())
             return range.start;
@@ -2015,7 +1843,6 @@ var Document = function(text) {
 
         return end;
     };
-
     this.applyDeltas = function(deltas) {
         for (var i=0; i<deltas.length; i++) {
             var delta = deltas[i];
@@ -2031,7 +1858,6 @@ var Document = function(text) {
                 this.remove(range);
         }
     };
-
     this.revertDeltas = function(deltas) {
         for (var i=deltas.length-1; i>=0; i--) {
             var delta = deltas[i];
@@ -2053,46 +1879,27 @@ var Document = function(text) {
 
 exports.Document = Document;
 });
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Ajax.org Code Editor (ACE).
- *
- * The Initial Developer of the Original Code is
- * Ajax.org B.V.
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *      Fabian Jakobs <fabian AT ajax DOT org>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
 
 define('ace/range', ['require', 'exports', 'module' ], function(require, exports, module) {
-"use strict";
 
+
+/**
+ * class Range
+ *
+ * This object is used in various places to indicate a region within the editor. To better visualize how this works, imagine a rectangle. Each quadrant of the rectangle is analogus to a range, as ranges contain a starting row and starting column, and an ending row, and ending column.
+ *
+ **/
+
+/**
+ * new Range(startRow, startColumn, endRow, endColumn)
+ * - startRow (Number): The starting row
+ * - startColumn (Number): The starting column
+ * - endRow (Number): The ending row
+ * - endColumn (Number): The ending column
+ *
+ * Creates a new `Range` object with the given starting and ending row and column points.
+ *
+ **/
 var Range = function(startRow, startColumn, endRow, endColumn) {
     this.start = {
         row: startRow,
@@ -2106,35 +1913,27 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
 };
 
 (function() {
-    this.isEequal = function(range) {
+    /**
+     * Range.isEqual(range) -> Boolean
+     * - range (Range): A range to check against
+     *
+     * Returns `true` if and only if the starting row and column, and ending tow and column, are equivalent to those given by `range`.
+     *
+     **/ 
+    this.isEqual = function(range) {
         return this.start.row == range.start.row &&
             this.end.row == range.end.row &&
             this.start.column == range.start.column &&
             this.end.column == range.end.column
-    };
-
+    }; 
     this.toString = function() {
         return ("Range: [" + this.start.row + "/" + this.start.column +
             "] -> [" + this.end.row + "/" + this.end.column + "]");
-    };
+    }; 
 
     this.contains = function(row, column) {
         return this.compare(row, column) == 0;
-    };
-
-    /**
-     * Compares this range (A) with another range (B), where B is the passed in
-     * range.
-     *
-     * Return values:
-     *  -2: (B) is infront of (A) and doesn't intersect with (A)
-     *  -1: (B) begins before (A) but ends inside of (A)
-     *   0: (B) is completly inside of (A) OR (A) is complety inside of (B)
-     *  +1: (B) begins inside of (A) but ends outside of (A)
-     *  +2: (B) is after (A) and doesn't intersect with (A)
-     *
-     *  42: FTW state: (B) ends in (A) but starts outside of (A)
-     */
+    }; 
     this.compareRange = function(range) {
         var cmp,
             end = range.end,
@@ -2164,22 +1963,86 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
         }
     }
 
+    /** related to: Range.compare
+     * Range.comparePoint(p) -> Number
+     * - p (Range): A point to compare with
+     * + (Number): This method returns one of the following numbers:<br/>
+     * * `0` if the two points are exactly equal<br/>
+     * * `-1` if `p.row` is less then the calling range<br/>
+     * * `1` if `p.row` is greater than the calling range<br/>
+     * <br/>
+     * If the starting row of the calling range is equal to `p.row`, and:<br/>
+     * * `p.column` is greater than or equal to the calling range's starting column, this returns `0`<br/>
+     * * Otherwise, it returns -1<br/>
+     *<br/>
+     * If the ending row of the calling range is equal to `p.row`, and:<br/>
+     * * `p.column` is less than or equal to the calling range's ending column, this returns `0`<br/>
+     * * Otherwise, it returns 1<br/>
+     *
+     * Checks the row and column points of `p` with the row and column points of the calling range.
+     *
+     * 
+     *
+     **/ 
     this.comparePoint = function(p) {
         return this.compare(p.row, p.column);
     }
 
+    /** related to: Range.comparePoint
+     * Range.containsRange(range) -> Boolean
+     * - range (Range): A range to compare with
+     *
+     * Checks the start and end points of `range` and compares them to the calling range. Returns `true` if the `range` is contained within the caller's range.
+     *
+     **/ 
     this.containsRange = function(range) {
         return this.comparePoint(range.start) == 0 && this.comparePoint(range.end) == 0;
     }
 
+    /**
+     * Range.intersects(range) -> Boolean
+     * - range (Range): A range to compare with
+     *
+     * Returns `true` if passed in `range` intersects with the one calling this method.
+     *
+     **/
+    this.intersects = function(range) {
+        var cmp = this.compareRange(range);
+        return (cmp == -1 || cmp == 0 || cmp == 1);
+    }
+
+    /**
+     * Range.isEnd(row, column) -> Boolean
+     * - row (Number): A row point to compare with
+     * - column (Number): A column point to compare with
+     *
+     * Returns `true` if the caller's ending row point is the same as `row`, and if the caller's ending column is the same as `column`.
+     *
+     **/
     this.isEnd = function(row, column) {
         return this.end.row == row && this.end.column == column;
     }
 
+    /**
+     * Range.isStart(row, column) -> Boolean
+     * - row (Number): A row point to compare with
+     * - column (Number): A column point to compare with
+     *
+     * Returns `true` if the caller's starting row point is the same as `row`, and if the caller's starting column is the same as `column`.
+     *
+     **/ 
     this.isStart = function(row, column) {
         return this.start.row == row && this.start.column == column;
     }
 
+    /**
+     * Range.setStart(row, column)
+     * - row (Number): A row point to set
+     * - column (Number): A column point to set
+     *
+     * Sets the starting row and column for the range.
+     *
+     **/ 
     this.setStart = function(row, column) {
         if (typeof row == "object") {
             this.start.column = row.column;
@@ -2190,6 +2053,14 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
         }
     }
 
+    /**
+     * Range.setEnd(row, column)
+     * - row (Number): A row point to set
+     * - column (Number): A column point to set
+     *
+     * Sets the starting row and column for the range.
+     *
+     **/ 
     this.setEnd = function(row, column) {
         if (typeof row == "object") {
             this.end.column = row.column;
@@ -2200,6 +2071,14 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
         }
     }
 
+    /** related to: Range.compare
+     * Range.inside(row, column) -> Boolean
+     * - row (Number): A row point to compare with
+     * - column (Number): A column point to compare with
+     *
+     * Returns `true` if the `row` and `column` are within the given range.
+     *
+     **/ 
     this.inside = function(row, column) {
         if (this.compare(row, column) == 0) {
             if (this.isEnd(row, column) || this.isStart(row, column)) {
@@ -2211,6 +2090,14 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
         return false;
     }
 
+    /** related to: Range.compare
+     * Range.insideStart(row, column) -> Boolean
+     * - row (Number): A row point to compare with
+     * - column (Number): A column point to compare with
+     *
+     * Returns `true` if the `row` and `column` are within the given range's starting points.
+     *
+     **/ 
     this.insideStart = function(row, column) {
         if (this.compare(row, column) == 0) {
             if (this.isEnd(row, column)) {
@@ -2222,6 +2109,14 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
         return false;
     }
 
+    /** related to: Range.compare
+     * Range.insideEnd(row, column) -> Boolean
+     * - row (Number): A row point to compare with
+     * - column (Number): A column point to compare with
+     *
+     * Returns `true` if the `row` and `column` are within the given range's ending points.
+     *
+     **/ 
     this.insideEnd = function(row, column) {
         if (this.compare(row, column) == 0) {
             if (this.isStart(row, column)) {
@@ -2233,6 +2128,27 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
         return false;
     }
 
+    /** 
+     * Range.compare(row, column) -> Number
+     * - row (Number): A row point to compare with
+     * - column (Number): A column point to compare with
+     * + (Number): This method returns one of the following numbers:<br/>
+     * * `0` if the two points are exactly equal <br/>
+     * * `-1` if `p.row` is less then the calling range <br/>
+     * * `1` if `p.row` is greater than the calling range <br/>
+     *  <br/>
+     * If the starting row of the calling range is equal to `p.row`, and: <br/>
+     * * `p.column` is greater than or equal to the calling range's starting column, this returns `0`<br/>
+     * * Otherwise, it returns -1<br/>
+     * <br/>
+     * If the ending row of the calling range is equal to `p.row`, and: <br/>
+     * * `p.column` is less than or equal to the calling range's ending column, this returns `0` <br/>
+     * * Otherwise, it returns 1
+     *
+     * Checks the row and column points with the row and column points of the calling range.
+     *
+     *
+     **/
     this.compare = function(row, column) {
         if (!this.isMultiLine()) {
             if (row === this.start.row) {
@@ -2254,10 +2170,6 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
 
         return 0;
     };
-
-    /**
-     * Like .compare(), but if isStart is true, return -1;
-     */
     this.compareStart = function(row, column) {
         if (this.start.row == row && this.start.column == column) {
             return -1;
@@ -2267,8 +2179,26 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
     }
 
     /**
-     * Like .compare(), but if isEnd is true, return 1;
-     */
+     * Range.compareEnd(row, column) -> Number
+     * - row (Number): A row point to compare with
+     * - column (Number): A column point to compare with
+     * + (Number): This method returns one of the following numbers:<br/>
+     * * `0` if the two points are exactly equal<br/>
+     * * `-1` if `p.row` is less then the calling range<br/>
+     * * `1` if `p.row` is greater than the calling range, or if `isEnd` is `true.<br/>
+     * <br/>
+     * If the starting row of the calling range is equal to `p.row`, and:<br/>
+     * * `p.column` is greater than or equal to the calling range's starting column, this returns `0`<br/>
+     * * Otherwise, it returns -1<br/>
+     *<br/>
+     * If the ending row of the calling range is equal to `p.row`, and:<br/>
+     * * `p.column` is less than or equal to the calling range's ending column, this returns `0`<br/>
+     * * Otherwise, it returns 1
+     *
+     * Checks the row and column points with the row and column points of the calling range.
+     *
+     *
+     **/
     this.compareEnd = function(row, column) {
         if (this.end.row == row && this.end.column == column) {
             return 1;
@@ -2277,6 +2207,21 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
         }
     }
 
+    /** 
+     * Range.compareInside(row, column) -> Number
+     * - row (Number): A row point to compare with
+     * - column (Number): A column point to compare with
+     * + (Number): This method returns one of the following numbers:<br/>
+     * * `1` if the ending row of the calling range is equal to `row`, and the ending column of the calling range is equal to `column`<br/>
+     * * `-1` if the starting row of the calling range is equal to `row`, and the starting column of the calling range is equal to `column`<br/>
+     * <br/>
+     * Otherwise, it returns the value after calling [[Range.compare `compare()`]].
+     *
+     * Checks the row and column points with the row and column points of the calling range.
+     *
+     *
+     *
+     **/
     this.compareInside = function(row, column) {
         if (this.end.row == row && this.end.column == column) {
             return 1;
@@ -2287,6 +2232,14 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
         }
     }
 
+    /** 
+     * Range.clipRows(firstRow, lastRow) -> Range
+     * - firstRow (Number): The starting row
+     * - lastRow (Number): The ending row
+     *
+     * Returns the part of the current `Range` that occurs within the boundaries of `firstRow` and `lastRow` as a new `Range` object.
+     *
+    **/
     this.clipRows = function(firstRow, lastRow) {
         if (this.end.row > lastRow) {
             var end = {
@@ -2317,7 +2270,6 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
         }
         return Range.fromPoints(start || this.start, end || this.end);
     };
-
     this.extend = function(row, column) {
         var cmp = this.compare(row, column);
 
@@ -2334,22 +2286,18 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
     this.isEmpty = function() {
         return (this.start.row == this.end.row && this.start.column == this.end.column);
     };
-
     this.isMultiLine = function() {
         return (this.start.row !== this.end.row);
     };
-
     this.clone = function() {
         return Range.fromPoints(this.start, this.end);
     };
-
     this.collapseRows = function() {
         if (this.end.column == 0)
             return new Range(this.start.row, 0, Math.max(this.start.row, this.end.row-1), 0)
         else
             return new Range(this.start.row, 0, this.end.row, 0)
     };
-
     this.toScreenRange = function(session) {
         var screenPosStart =
             session.documentToScreenPosition(this.start);
@@ -2363,61 +2311,29 @@ var Range = function(startRow, startColumn, endRow, endColumn) {
     };
 
 }).call(Range.prototype);
-
-
 Range.fromPoints = function(start, end) {
     return new Range(start.row, start.column, end.row, end.column);
 };
 
 exports.Range = Range;
 });
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Ajax.org Code Editor (ACE).
- *
- * The Initial Developer of the Original Code is
- * Ajax.org B.V.
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *      Fabian Jakobs <fabian AT ajax DOT org>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
 
 define('ace/anchor', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/event_emitter'], function(require, exports, module) {
-"use strict";
+
 
 var oop = require("./lib/oop");
 var EventEmitter = require("./lib/event_emitter").EventEmitter;
 
 /**
- * An Anchor is a floating pointer in the document. Whenever text is inserted or
- * deleted before the cursor, the position of the cursor is updated
- */
+ * new Anchor(doc, row, column)
+ * - doc (Document): The document to associate with the anchor
+ * - row (Number): The starting row position
+ * - column (Number): The starting column position
+ *
+ * Creates a new `Anchor` and associates it with a document.
+ *
+ **/
+
 var Anchor = exports.Anchor = function(doc, row, column) {
     this.document = doc;
     
@@ -2433,15 +2349,15 @@ var Anchor = exports.Anchor = function(doc, row, column) {
 (function() {
 
     oop.implement(this, EventEmitter);
-    
+
     this.getPosition = function() {
         return this.$clipPositionToDocument(this.row, this.column);
     };
-    
+        
     this.getDocument = function() {
         return this.document;
     };
-    
+
     this.onChange = function(e) {
         var delta = e.data;
         var range = delta.range;
@@ -2534,11 +2450,11 @@ var Anchor = exports.Anchor = function(doc, row, column) {
             value: pos
         });
     };
-    
+
     this.detach = function() {
         this.document.removeEventListener("change", this.$onChange);
     };
-    
+
     this.$clipPositionToDocument = function(row, column) {
         var pos = {};
     
@@ -2564,45 +2480,9 @@ var Anchor = exports.Anchor = function(doc, row, column) {
 }).call(Anchor.prototype);
 
 });
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Ajax.org Code Editor (ACE).
- *
- * The Initial Developer of the Original Code is
- * Ajax.org B.V.
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *      Fabian Jakobs <fabian AT ajax DOT org>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
 
 define('ace/lib/lang', ['require', 'exports', 'module' ], function(require, exports, module) {
-"use strict";
+
 
 exports.stringReverse = function(string) {
     return string.split("").reverse().join("");
@@ -2666,10 +2546,6 @@ exports.arrayToMap = function(arr) {
     return map;
 
 };
-
-/**
- * splice out of 'array' anything that === 'value'
- */
 exports.arrayRemove = function(array, value) {
   for (var i = 0; i <= array.length; i++) {
     if (value === array[i]) {
@@ -2681,6 +2557,20 @@ exports.arrayRemove = function(array, value) {
 exports.escapeRegExp = function(str) {
     return str.replace(/([.*+?^${}()|[\]\/\\])/g, '\\$1');
 };
+
+exports.getMatchOffsets = function(string, regExp) {
+    var matches = [];
+
+    string.replace(regExp, function(str) {
+        matches.push({
+            offset: arguments[arguments.length-2],
+            length: str.length
+        });
+    });
+
+    return matches;
+};
+
 
 exports.deferredCall = function(fcn) {
 
@@ -2714,60 +2604,13 @@ exports.deferredCall = function(fcn) {
 };
 
 });
-/*
-    http://www.JSON.org/json_parse.js
-    2008-09-18
-
-    Public Domain.
-
-    NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
-
-    This file creates a json_parse function.
-
-        json_parse(text, reviver)
-            This method parses a JSON text to produce an object or array.
-            It can throw a SyntaxError exception.
-
-            The optional reviver parameter is a function that can filter and
-            transform the results. It receives each of the keys and values,
-            and its return value is used instead of the original value.
-            If it returns what it received, then the structure is not modified.
-            If it returns undefined then the member is deleted.
-
-            Example:
-
-            // Parse the text. Values that look like ISO date strings will
-            // be converted to Date objects.
-
-            myData = json_parse(text, function (key, value) {
-                var a;
-                if (typeof value === 'string') {
-                    a =
-/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
-                    if (a) {
-                        return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
-                            +a[5], +a[6]));
-                    }
-                }
-                return value;
-            });
-
-    This is a reference implementation. You are free to copy, modify, or
-    redistribute.
-
-    This code should be minified before deployment.
-    See http://javascript.crockford.com/jsmin.html
-
-    USE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO
-    NOT CONTROL.
-*/
 
 /*members "", "\"", "\/", "\\", at, b, call, charAt, f, fromCharCode,
     hasOwnProperty, message, n, name, push, r, t, text
 */
 
 define('ace/mode/json/json_parse', ['require', 'exports', 'module' ], function(require, exports, module) {
-"use strict";
+
 
 // This is a function that can parse a JSON text, producing a JavaScript
 // data structure. It is a simple, recursive descent parser. It does not use
